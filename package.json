@@ -1,0 +1,26 @@
+{
+  "name": "everton-chaveiro",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Site do Everton Chaveiro Expresso 24h, em Ipanema (Rio de Janeiro).",
+  "scripts": {
+    "dev": "http-server public -a 127.0.0.1 -c-1 --no-dotfiles -o",
+    "start": "npm run dev",
+    "vendor": "node scripts/vendor.mjs",
+    "postinstall": "node scripts/vendor.mjs"
+  },
+  "dependencies": {
+    "lucide": "1.61.0",
+    "react": "18.3.1",
+    "react-dom": "18.3.1"
+  },
+  "devDependencies": {
+    "http-server": "14.1.1"
+  },
+  "overrides": {
+    "html-encoding-sniffer": "6.0.0"
+  },
+  "engines": {
+    "node": ">=20.19"
+  }
+}
