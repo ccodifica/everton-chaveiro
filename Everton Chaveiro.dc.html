@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+<style>
+html{scroll-behavior:smooth}
+*{box-sizing:border-box}
+body{margin:0;background:#071B3A;color:#071B3A;font-family:'Plus Jakarta Sans',system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+a{color:#1B8AE8}a:hover{color:#0E6FC4}
+img{max-width:100%}
+@keyframes introRoll{0%{transform:translateX(-95vw) rotate(-540deg);opacity:0}6%{opacity:1}100%{transform:translateX(0) rotate(0deg);opacity:1}}
+@keyframes introSettle{0%{transform:rotate(0deg) scale(1)}35%{transform:rotate(7deg) scale(1.05)}70%{transform:rotate(-4deg) scale(.98)}100%{transform:rotate(0deg) scale(1)}}
+@keyframes shine{0%{transform:translateX(-130%) skewX(-14deg)}100%{transform:translateX(130%) skewX(-14deg)}}
+@keyframes glowIn{0%{opacity:0;transform:scale(.5)}100%{opacity:1;transform:scale(1)}}
+@keyframes riseIn{0%{opacity:0;transform:translateY(22px)}100%{opacity:1;transform:translateY(0)}}
+@keyframes popIn{0%{opacity:0;transform:scale(.7)}65%{transform:scale(1.06)}100%{opacity:1;transform:scale(1)}}
+@keyframes appear{0%{opacity:0}100%{opacity:1}}
+@keyframes floatY{0%,100%{transform:translateY(0) rotate(0deg)}50%{transform:translateY(-12px) rotate(-2deg)}}
+@keyframes pulseRing{0%{transform:scale(1);opacity:.9}100%{transform:scale(1.45);opacity:0}}
+@keyframes ticker{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes slideFade{0%{opacity:0}8%{opacity:1}25%{opacity:1}33%{opacity:0}100%{opacity:0}}
+@keyframes kenburns{0%{transform:scale(1.02) translate(0,0)}100%{transform:scale(1.09) translate(-1%,-1%)}}
+@keyframes drift1{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(7vw,6vh) scale(1.18)}}
+@keyframes drift2{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(-6vw,-8vh) scale(1.12)}}
+@keyframes wordIn{0%{opacity:0;transform:translateY(.5em);filter:blur(8px)}100%{opacity:1;transform:translateY(0);filter:blur(0)}}
+@keyframes marker{0%{background-size:0% .14em}100%{background-size:100% .14em}}
+</style>
+</helmet>
+
+<sc-if value="{{ showIntro }}" hint-placeholder-val="{{ false }}">
+<div data-screen-label="Intro" onClick="{{ skipIntro }}" style="position:fixed; inset:0; z-index:1000; display:flex; align-items:center; justify-content:center; cursor:pointer; overflow:hidden">
+  <div ref="{{ introBgRef }}" style="position:absolute; inset:0; background:#071B3A; transition:opacity .7s ease"></div>
+  <div ref="{{ introGlowRef }}" style="position:absolute; width:90vmin; height:90vmin; border-radius:50%; background:radial-gradient(circle, rgba(27,138,232,.6), rgba(27,138,232,0) 68%); filter:blur(18px); animation-name:glowIn; animation-duration:1.4s; animation-fill-mode:both; transition:opacity .6s ease"></div>
+  <div ref="{{ introWrapRef }}" style="position:relative; width:min(62vw, 300px); aspect-ratio:1; border-radius:50%; overflow:hidden; will-change:transform; animation-name:introRoll, introSettle; animation-duration:1.1s, .6s; animation-delay:0s, 1.1s; animation-timing-function:cubic-bezier(.2,.8,.2,1), ease-in-out; animation-fill-mode:both, both">
+    <img src="assets/logo.png" alt="" style="display:block; width:100%; height:100%">
+    <div style="position:absolute; inset:0; background:linear-gradient(105deg, transparent 38%, rgba(255,255,255,.55) 50%, transparent 62%); transform:translateX(-130%); animation-name:shine; animation-duration:.7s; animation-delay:1.35s; animation-timing-function:ease-in-out; animation-fill-mode:both"></div>
+  </div>
+  <div ref="{{ introTagRef }}" style="position:absolute; bottom:16vh; left:0; right:0; text-align:center; padding:0 20px; font:700 clamp(11px,3vw,13px)/1.4 'Plus Jakarta Sans',sans-serif; letter-spacing:.16em; text-transform:uppercase; color:#FFD200; animation-name:riseIn; animation-duration:.6s; animation-delay:1.2s; animation-fill-mode:both; transition:opacity .4s ease">Chaveiro 24h · Ipanema · Zona Sul</div>
+  <div style="position:absolute; bottom:26px; right:26px; font:600 13px 'Plus Jakarta Sans',sans-serif; letter-spacing:.04em; color:rgba(255,255,255,.55)">Pular ›</div>
+</div>
+</sc-if>
+
+<header data-screen-label="Navbar" style="position:fixed; top:0; left:0; right:0; z-index:60; display:flex; justify-content:center; padding:{{ navOuterPad }}; transform:{{ navHide }}; transition:transform .5s cubic-bezier(.2,.8,.2,1), padding .5s cubic-bezier(.2,.8,.2,1); pointer-events:none; animation-name:appear; animation-duration:.6s; animation-delay:var(--i, 2.2s); animation-fill-mode:both">
+  <div style="pointer-events:auto; width:100%; max-width:{{ navMax }}; display:flex; align-items:center; gap:12px; padding:{{ navPad }}; border-radius:999px; background:{{ navBg }}; border:1px solid {{ navBorder }}; box-shadow:{{ navShadow }}; backdrop-filter:{{ navBlur }}; -webkit-backdrop-filter:{{ navBlur }}; transition:max-width .5s cubic-bezier(.2,.8,.2,1), padding .5s cubic-bezier(.2,.8,.2,1), background .4s ease, border-color .4s ease, box-shadow .4s ease">
+    <a href="#top" aria-label="Voltar ao início" style="display:flex; align-items:center; gap:11px; text-decoration:none; color:#fff; flex:none">
+      <span style="position:relative; width:40px; height:40px; flex:none; display:flex; align-items:center; justify-content:center">
+        <span aria-hidden="true" style="position:absolute; inset:-4px; border-radius:50%; background:conic-gradient(#FFD200 {{ progressDeg }}, rgba(255,255,255,.14) 0); -webkit-mask:radial-gradient(farthest-side, transparent calc(100% - 2.5px), #000 calc(100% - 2px)); mask:radial-gradient(farthest-side, transparent calc(100% - 2.5px), #000 calc(100% - 2px)); opacity:{{ ringOpacity }}; transition:opacity .4s ease"></span>
+        <img src="assets/logo.png" alt="Everton Chaveiro Expresso" style="width:40px; height:40px; display:block; border-radius:50%">
+      </span>
+      <span style="display:{{ showWordmark }}; flex-direction:column; gap:3px">
+        <span style="font:700 15px/1 'Plus Jakarta Sans',sans-serif; letter-spacing:-.01em">Everton Chaveiro</span>
+        <span style="font:600 10.5px/1 'Plus Jakarta Sans',sans-serif; letter-spacing:.14em; text-transform:uppercase; color:#FFD200">24h · Ipanema</span>
+      </span>
+    </a>
+    <nav ref="{{ navRef }}" onMouseLeave="{{ navLeave }}" aria-label="Seções" style="display:{{ showNav }}; position:relative; margin:0 auto; align-items:center; gap:2px; padding:4px; border-radius:999px; background:rgba(255,255,255,.07); border:1px solid rgba(255,255,255,.1)">
+      <span aria-hidden="true" style="position:absolute; top:4px; bottom:4px; left:0; width:{{ indW }}px; transform:translateX({{ indX }}px); opacity:{{ indO }}; border-radius:999px; background:rgba(255,255,255,.16); box-shadow:inset 0 1px 0 rgba(255,255,255,.12); transition:transform .45s cubic-bezier(.2,.8,.2,1), width .45s cubic-bezier(.2,.8,.2,1), opacity .25s ease; pointer-events:none"></span>
+      <a ref="{{ linkRefs.servicos }}" href="#servicos" onMouseEnter="{{ hoverServicos }}" style="position:relative; display:inline-flex; align-items:center; min-height:40px; padding:0 16px; border-radius:999px; color:{{ colServicos }}; font:600 14px/1 'Plus Jakarta Sans',sans-serif; letter-spacing:-.005em; text-decoration:none; white-space:nowrap; transition:color .25s ease" style-hover="color:#fff">Serviços</a>
+      <a ref="{{ linkRefs.avaliacoes }}" href="#avaliacoes" onMouseEnter="{{ hoverAvaliacoes }}" style="position:relative; display:inline-flex; align-items:center; min-height:40px; padding:0 16px; border-radius:999px; color:{{ colAvaliacoes }}; font:600 14px/1 'Plus Jakarta Sans',sans-serif; letter-spacing:-.005em; text-decoration:none; white-space:nowrap; transition:color .25s ease" style-hover="color:#fff">Avaliações</a>
+      <a ref="{{ linkRefs.onde }}" href="#onde" onMouseEnter="{{ hoverOnde }}" style="position:relative; display:inline-flex; align-items:center; min-height:40px; padding:0 16px; border-radius:999px; color:{{ colOnde }}; font:600 14px/1 'Plus Jakarta Sans',sans-serif; letter-spacing:-.005em; text-decoration:none; white-space:nowrap; transition:color .25s ease" style-hover="color:#fff">Onde estamos</a>
+    </nav>
+    <a href="{{ waUrl }}" target="_blank" rel="noopener" style="display:{{ showPillText }}; margin-left:auto; align-items:center; gap:9px; min-height:44px; padding:5px 18px 5px 5px; border-radius:999px; background:linear-gradient(180deg,#3BE37C,#22C55E); border:1px solid rgba(6,51,27,.16); color:#06331B; font:700 14px/1 'Plus Jakarta Sans',sans-serif; text-decoration:none; box-shadow:inset 0 1px 0 rgba(255,255,255,.45), 0 6px 16px -6px rgba(34,197,94,.6); transition:transform .2s; flex:none; white-space:nowrap" style-hover="transform:translateY(-1px); color:#06331B"><span style="display:flex; align-items:center; justify-content:center; width:32px; height:32px; border-radius:50%; background:#fff; color:#1FAD52; flex:none">{{ waIcSm }}</span>WhatsApp</a>
+  </div>
+</header>
+
+<main>
+<section id="top" ref="{{ heroRef }}" data-screen-label="Hero" style="position:relative; overflow:hidden; display:flex; align-items:center; min-height:min(900px, 100svh); color:#fff; background:linear-gradient(180deg,#0B2E66 0%,#071B3A 55%,#061634 100%); padding:calc(88px + clamp(16px,3vw,40px)) 20px clamp(60px,8vw,96px)">
+  <div aria-hidden="true" data-screen-label="Fotos de fundo" style="position:absolute; inset:0; overflow:hidden; pointer-events:none; background:#071B3A">
+    <img src="assets/quiosque-frente-hd.jpg" alt="" style="position:absolute; inset:0; width:100%; height:100%; object-fit:cover; opacity:1; animation-name:{{ slideAnim }}, kenburns; animation-duration:20s, 20s; animation-delay:0s, 0s; animation-iteration-count:infinite, infinite; animation-direction:normal, alternate; animation-timing-function:ease-in-out, ease-in-out; animation-fill-mode:both, both">
+    <img src="assets/domicilio-hd.jpg" alt="" style="position:absolute; inset:0; width:100%; height:100%; object-fit:cover; opacity:0; animation-name:{{ slideAnim }}, kenburns; animation-duration:20s, 20s; animation-delay:5s, -7s; animation-iteration-count:infinite, infinite; animation-direction:normal, alternate; animation-timing-function:ease-in-out, ease-in-out; animation-fill-mode:both, both">
+    <img src="assets/quiosque-lado-hd.jpg" alt="" style="position:absolute; inset:0; width:100%; height:100%; object-fit:cover; opacity:0; animation-name:{{ slideAnim }}, kenburns; animation-duration:20s, 20s; animation-delay:10s, -13s; animation-iteration-count:infinite, infinite; animation-direction:normal, alternate; animation-timing-function:ease-in-out, ease-in-out; animation-fill-mode:both, both">
+    <img src="assets/quiosque-rua-hd.jpg" alt="" style="position:absolute; inset:0; width:100%; height:100%; object-fit:cover; opacity:0; animation-name:{{ slideAnim }}, kenburns; animation-duration:20s, 20s; animation-delay:15s, -4s; animation-iteration-count:infinite, infinite; animation-direction:normal, alternate; animation-timing-function:ease-in-out, ease-in-out; animation-fill-mode:both, both">
+  </div>
+  <div aria-hidden="true" style="position:absolute; inset:0; pointer-events:none; background:{{ heroOverlay }}"></div>
+  <div aria-hidden="true" style="position:absolute; left:0; right:0; bottom:0; height:140px; background:linear-gradient(180deg, rgba(5,12,26,0), rgba(5,12,26,.9)); pointer-events:none"></div>
+  <div style="position:relative; width:100%; max-width:1120px; margin:0 auto; display:grid; grid-template-columns:repeat(auto-fit, minmax(min(100%, 380px), 1fr)); gap:clamp(28px,5vw,64px); align-items:center">
+    <div style="position:relative; display:flex; justify-content:center; align-items:center; padding:clamp(16px,3vw,32px) 0">
+      <div style="position:relative; width:min(46vw, 340px); aspect-ratio:1">
+        <div aria-hidden="true" style="position:absolute; left:50%; top:50%; width:120%; aspect-ratio:1; margin-left:-60%; margin-top:-60%; border-radius:50%; background:radial-gradient(circle, rgba(5,12,26,.6), rgba(5,12,26,0) 68%); filter:blur(22px); pointer-events:none"></div>
+        <img ref="{{ heroLogoRef }}" src="assets/logo.png" alt="Everton Chaveiro Expresso 24 horas" style="position:relative; display:block; width:100%; height:auto; filter:drop-shadow(0 30px 50px rgba(0,0,0,.5)); animation-name:appear, floatY; animation-duration:.3s, 7s; animation-delay:calc(var(--i, 2.2s) + .5s), calc(var(--i, 2.2s) + .8s); animation-timing-function:ease, ease-in-out; animation-iteration-count:1, infinite; animation-fill-mode:both, none">
+      </div>
+    </div>
+    <div style="position:relative">
+      <h1 style="margin:0; font-family:'Plus Jakarta Sans',sans-serif; font-weight:800; font-size:clamp(32px,4.4vw,56px); line-height:1.04; letter-spacing:-.02em; color:#fff; text-wrap:balance; text-shadow:0 2px 24px rgba(0,0,0,.45)" aria-label="Ficou trancado pra fora? A gente chega em minutos."><span style="display:inline-block; margin-right:.26em; animation-name:wordIn; animation-duration:.7s; animation-delay:calc(var(--i, 2.2s) + .05s); animation-fill-mode:both">Ficou</span><span style="display:inline-block; margin-right:.26em; animation-name:wordIn; animation-duration:.7s; animation-delay:calc(var(--i, 2.2s) + .12s); animation-fill-mode:both">trancado</span><span style="display:inline-block; margin-right:.26em; animation-name:wordIn; animation-duration:.7s; animation-delay:calc(var(--i, 2.2s) + .19s); animation-fill-mode:both">pra</span><span style="display:inline-block; margin-right:.26em; animation-name:wordIn; animation-duration:.7s; animation-delay:calc(var(--i, 2.2s) + .26s); animation-fill-mode:both">fora?</span><span style="display:inline-block; margin-right:.26em; animation-name:wordIn; animation-duration:.7s; animation-delay:calc(var(--i, 2.2s) + .4s); animation-fill-mode:both">A</span><span style="display:inline-block; margin-right:.26em; animation-name:wordIn; animation-duration:.7s; animation-delay:calc(var(--i, 2.2s) + .47s); animation-fill-mode:both">gente</span><span style="display:inline-block; margin-right:.26em; animation-name:wordIn; animation-duration:.7s; animation-delay:calc(var(--i, 2.2s) + .54s); animation-fill-mode:both">chega</span><span style="display:inline-block; color:#fff; background-image:linear-gradient(#FFD200,#FFD200); background-repeat:no-repeat; background-position:0 92%; background-size:0% .14em; animation-name:wordIn, marker; animation-duration:.7s, .6s; animation-delay:calc(var(--i, 2.2s) + .61s), calc(var(--i, 2.2s) + 1.15s); animation-timing-function:ease, cubic-bezier(.2,.8,.2,1); animation-fill-mode:both, forwards">em minutos.</span></h1>
+      <p style="margin:22px 0 0; max-width:560px; font:400 clamp(16px,1.4vw,19px)/1.6 'Plus Jakarta Sans',sans-serif; color:rgba(255,255,255,.88); text-wrap:pretty; text-shadow:0 1px 16px rgba(0,0,0,.45); animation-name:riseIn; animation-duration:.7s; animation-delay:calc(var(--i, 2.2s) + .8s); animation-fill-mode:both">Chaveiro 24h em Ipanema. Atendimento a domicílio em toda a Zona Sul, sem quebrar nada.</p>
+      <div style="display:flex; flex-wrap:wrap; gap:12px; align-items:center; margin-top:32px; animation-name:popIn; animation-duration:.6s; animation-delay:calc(var(--i, 2.2s) + .95s); animation-fill-mode:both">
+        <a href="{{ waUrl }}" target="_blank" rel="noopener" style="display:inline-flex; flex:0 0 auto; width:min(100%, 380px); justify-content:center; align-items:center; gap:12px; min-height:62px; padding:8px 30px 8px 8px; border-radius:999px; background:linear-gradient(180deg,#3BE37C,#22C55E); border:1px solid rgba(6,51,27,.16); color:#06331B; font:700 17px/1 'Plus Jakarta Sans',sans-serif; letter-spacing:-.005em; text-decoration:none; box-shadow:inset 0 1px 0 rgba(255,255,255,.45), 0 10px 24px -8px rgba(34,197,94,.65); transition:transform .2s, box-shadow .2s" style-hover="transform:translateY(-2px); box-shadow:inset 0 1px 0 rgba(255,255,255,.45), 0 16px 32px -10px rgba(34,197,94,.85); color:#06331B">
+          <span style="display:flex; align-items:center; justify-content:center; width:40px; height:40px; border-radius:50%; background:#fff; color:#1FAD52; flex:none; box-shadow:0 2px 6px rgba(6,51,27,.18)">{{ waIc }}</span>
+          Chamar no WhatsApp
+        </a>
+      </div>
+      <div style="display:flex; flex-wrap:wrap; gap:10px 24px; align-items:center; margin-top:30px; font:500 15px 'Plus Jakarta Sans',sans-serif; color:rgba(255,255,255,.75); animation-name:riseIn; animation-duration:.7s; animation-delay:calc(var(--i, 2.2s) + 1.1s); animation-fill-mode:both">
+        <a href="https://www.google.com/maps/search/?api=1&query=Everton+Chaveiro+Expresso+24hrs+Rua+Bar%C3%A3o+da+Torre+521+Ipanema" target="_blank" rel="noopener" style="display:inline-flex; align-items:center; gap:8px; color:rgba(255,255,255,.75); text-decoration:none" style-hover="color:#fff"><span style="color:#FFD200; letter-spacing:2px; font-size:15px">★★★★★</span><strong style="color:#fff">5,0</strong> · 142 avaliações no Google</a>
+        <span style="display:inline-flex; align-items:center; gap:8px">{{ ic.pinSm }} R. Barão da Torre, 521 · Ipanema</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="servicos" data-screen-label="Serviços" style="background:#fff; padding:clamp(60px,9vw,110px) 20px; scroll-margin-top:96px">
+  <div style="max-width:1120px; margin:0 auto">
+    <div style="display:flex; flex-wrap:wrap; align-items:flex-end; justify-content:space-between; gap:16px 40px">
+      <div style="max-width:560px">
+        <div style="font:600 13px/1 'Plus Jakarta Sans',sans-serif; letter-spacing:.14em; text-transform:uppercase; color:#E31E24">Serviços</div>
+        <h2 style="margin:14px 0 0; font-family:'Plus Jakarta Sans',sans-serif; font-weight:800; font-size:clamp(30px,4.4vw,48px); line-height:1.05; letter-spacing:-.025em; color:#071B3A; text-wrap:balance">O que a gente resolve</h2>
+      </div>
+      <p style="margin:0; max-width:380px; font:400 17px/1.55 'Plus Jakarta Sans',sans-serif; color:#4A5A70; text-wrap:pretty">Toca no serviço e a conversa já abre no WhatsApp com o pedido certo.</p>
+    </div>
+    <div style="margin-top:44px; display:grid; grid-template-columns:{{ svcGroupCols }}; gap:clamp(24px,3vw,40px)">
+      <div style="display:flex; flex-direction:column; gap:4px">
+        <div style="font:600 12px/1 'Plus Jakarta Sans',sans-serif; letter-spacing:.14em; text-transform:uppercase; color:#1B8AE8; padding:0 10px 12px; border-bottom:1px solid #E3EAF2; margin-bottom:8px">Abertura</div>
+        <a href="{{ svc.door }}" target="_blank" rel="noopener" style="display:flex; align-items:center; gap:14px; min-height:60px; padding:10px 12px 10px 10px; border-radius:14px; text-decoration:none; color:#071B3A; transition:background .2s" style-hover="background:#F3F8FD; color:#071B3A">
+          <span style="width:40px; height:40px; flex:none; border-radius:11px; background:#E8F2FD; color:#1B8AE8; display:flex; align-items:center; justify-content:center">{{ ic.door }}</span>
+          <span style="flex:1; font:600 16px/1.3 'Plus Jakarta Sans',sans-serif">Portas residenciais</span>
+          <span style="color:#C3D0DF; display:flex">{{ ic.arrow }}</span>
+        </a>
+        <a href="{{ svc.car }}" target="_blank" rel="noopener" style="display:flex; align-items:center; gap:14px; min-height:60px; padding:10px 12px 10px 10px; border-radius:14px; text-decoration:none; color:#071B3A; transition:background .2s" style-hover="background:#F3F8FD; color:#071B3A">
+          <span style="width:40px; height:40px; flex:none; border-radius:11px; background:#E8F2FD; color:#1B8AE8; display:flex; align-items:center; justify-content:center">{{ ic.car }}</span>
+          <span style="flex:1; font:600 16px/1.3 'Plus Jakarta Sans',sans-serif">Carros</span>
+          <span style="color:#C3D0DF; display:flex">{{ ic.arrow }}</span>
+        </a>
+        <a href="{{ svc.vault }}" target="_blank" rel="noopener" style="display:flex; align-items:center; gap:14px; min-height:60px; padding:10px 12px 10px 10px; border-radius:14px; text-decoration:none; color:#071B3A; transition:background .2s" style-hover="background:#F3F8FD; color:#071B3A">
+          <span style="width:40px; height:40px; flex:none; border-radius:11px; background:#E8F2FD; color:#1B8AE8; display:flex; align-items:center; justify-content:center">{{ ic.vault }}</span>
+          <span style="flex:1; font:600 16px/1.3 'Plus Jakarta Sans',sans-serif">Cofres</span>
+          <span style="color:#C3D0DF; display:flex">{{ ic.arrow }}</span>
+        </a>
+      </div>
+      <div style="display:flex; flex-direction:column; gap:4px">
+        <div style="font:600 12px/1 'Plus Jakarta Sans',sans-serif; letter-spacing:.14em; text-transform:uppercase; color:#1B8AE8; padding:0 10px 12px; border-bottom:1px solid #E3EAF2; margin-bottom:8px">Chaves</div>
+        <a href="{{ svc.key }}" target="_blank" rel="noopener" style="display:flex; align-items:center; gap:14px; min-height:60px; padding:10px 12px 10px 10px; border-radius:14px; text-decoration:none; color:#071B3A; transition:background .2s" style-hover="background:#F3F8FD; color:#071B3A">
+          <span style="width:40px; height:40px; flex:none; border-radius:11px; background:#E8F2FD; color:#1B8AE8; display:flex; align-items:center; justify-content:center">{{ ic.key }}</span>
+          <span style="flex:1; font:600 16px/1.3 'Plus Jakarta Sans',sans-serif">Codificadas e automotivas</span>
+          <span style="color:#C3D0DF; display:flex">{{ ic.arrow }}</span>
+        </a>
+        <a href="{{ svc.copy }}" target="_blank" rel="noopener" style="display:flex; align-items:center; gap:14px; min-height:60px; padding:10px 12px 10px 10px; border-radius:14px; text-decoration:none; color:#071B3A; transition:background .2s" style-hover="background:#F3F8FD; color:#071B3A">
+          <span style="width:40px; height:40px; flex:none; border-radius:11px; background:#E8F2FD; color:#1B8AE8; display:flex; align-items:center; justify-content:center">{{ ic.copy }}</span>
+          <span style="flex:1; font:600 16px/1.3 'Plus Jakarta Sans',sans-serif">Cópia na hora</span>
+          <span style="color:#C3D0DF; display:flex">{{ ic.arrow }}</span>
+        </a>
+        <a href="{{ svc.bike }}" target="_blank" rel="noopener" style="display:flex; align-items:center; gap:14px; min-height:60px; padding:10px 12px 10px 10px; border-radius:14px; text-decoration:none; color:#071B3A; transition:background .2s" style-hover="background:#F3F8FD; color:#071B3A">
+          <span style="width:40px; height:40px; flex:none; border-radius:11px; background:#E8F2FD; color:#1B8AE8; display:flex; align-items:center; justify-content:center">{{ ic.bike }}</span>
+          <span style="flex:1; font:600 16px/1.3 'Plus Jakarta Sans',sans-serif">Chaves de moto</span>
+          <span style="color:#C3D0DF; display:flex">{{ ic.arrow }}</span>
+        </a>
+      </div>
+      <div style="display:flex; flex-direction:column; gap:4px">
+        <div style="font:600 12px/1 'Plus Jakarta Sans',sans-serif; letter-spacing:.14em; text-transform:uppercase; color:#1B8AE8; padding:0 10px 12px; border-bottom:1px solid #E3EAF2; margin-bottom:8px">Fechaduras</div>
+        <a href="{{ svc.lock }}" target="_blank" rel="noopener" style="display:flex; align-items:center; gap:14px; min-height:60px; padding:10px 12px 10px 10px; border-radius:14px; text-decoration:none; color:#071B3A; transition:background .2s" style-hover="background:#F3F8FD; color:#071B3A">
+          <span style="width:40px; height:40px; flex:none; border-radius:11px; background:#E8F2FD; color:#1B8AE8; display:flex; align-items:center; justify-content:center">{{ ic.lock }}</span>
+          <span style="flex:1; font:600 16px/1.3 'Plus Jakarta Sans',sans-serif">Troca e instalação</span>
+          <span style="color:#C3D0DF; display:flex">{{ ic.arrow }}</span>
+        </a>
+        <a href="{{ svc.finger }}" target="_blank" rel="noopener" style="display:flex; align-items:center; gap:14px; min-height:60px; padding:10px 12px 10px 10px; border-radius:14px; text-decoration:none; color:#071B3A; transition:background .2s" style-hover="background:#F3F8FD; color:#071B3A">
+          <span style="width:40px; height:40px; flex:none; border-radius:11px; background:#E8F2FD; color:#1B8AE8; display:flex; align-items:center; justify-content:center">{{ ic.finger }}</span>
+          <span style="flex:1; font:600 16px/1.3 'Plus Jakarta Sans',sans-serif">Digitais e eletrônicas</span>
+          <span style="color:#C3D0DF; display:flex">{{ ic.arrow }}</span>
+        </a>
+        <a href="{{ svc.wrench }}" target="_blank" rel="noopener" style="display:flex; align-items:center; gap:14px; min-height:60px; padding:10px 12px 10px 10px; border-radius:14px; text-decoration:none; color:#071B3A; transition:background .2s" style-hover="background:#F3F8FD; color:#071B3A">
+          <span style="width:40px; height:40px; flex:none; border-radius:11px; background:#E8F2FD; color:#1B8AE8; display:flex; align-items:center; justify-content:center">{{ ic.wrench }}</span>
+          <span style="flex:1; font:600 16px/1.3 'Plus Jakarta Sans',sans-serif">Conserto</span>
+          <span style="color:#C3D0DF; display:flex">{{ ic.arrow }}</span>
+        </a>
+      </div>
+    </div>
+    <div style="margin-top:36px; display:grid; grid-template-columns:repeat(auto-fit, minmax(min(100%, 300px), 1fr)); gap:12px">
+      <a href="{{ svc.urgent }}" target="_blank" rel="noopener" style="display:flex; align-items:center; gap:16px; padding:20px 22px; border-radius:18px; background:#071B3A; color:#fff; text-decoration:none; transition:transform .2s" style-hover="transform:translateY(-2px); color:#fff">
+        <span style="width:46px; height:46px; flex:none; border-radius:13px; background:#FFD200; color:#071B3A; display:flex; align-items:center; justify-content:center">{{ ic.clock }}</span>
+        <span style="display:flex; flex-direction:column; gap:3px"><span style="font:700 17px/1.2 'Plus Jakarta Sans',sans-serif">Emergência 24h</span><span style="font:400 14px/1.4 'Plus Jakarta Sans',sans-serif; color:rgba(255,255,255,.72)">Madrugada, feriado ou domingo.</span></span>
+        <span style="margin-left:auto; display:flex; color:#FFD200">{{ ic.arrow }}</span>
+      </a>
+      <a href="{{ svc.home }}" target="_blank" rel="noopener" style="display:flex; align-items:center; gap:16px; padding:20px 22px; border-radius:18px; background:#F3F7FB; color:#071B3A; text-decoration:none; transition:transform .2s" style-hover="transform:translateY(-2px); color:#071B3A">
+        <span style="width:46px; height:46px; flex:none; border-radius:13px; background:#fff; color:#1B8AE8; display:flex; align-items:center; justify-content:center; box-shadow:0 1px 3px rgba(7,27,58,.08)">{{ ic.nav }}</span>
+        <span style="display:flex; flex-direction:column; gap:3px"><span style="font:700 17px/1.2 'Plus Jakarta Sans',sans-serif">Atendimento a domicílio</span><span style="font:400 14px/1.4 'Plus Jakarta Sans',sans-serif; color:#5B6B80">Toda a Zona Sul, saindo de Ipanema.</span></span>
+        <span style="margin-left:auto; display:flex; color:#1B8AE8">{{ ic.arrow }}</span>
+      </a>
+    </div>
+    <p style="margin:28px 0 0; font:500 15px/1.5 'Plus Jakarta Sans',sans-serif; color:#5B6B80">Não achou o que precisa? <a href="{{ waUrl }}" target="_blank" rel="noopener" style="color:#1B8AE8; font-weight:700">Manda mensagem</a> que a gente dá um jeito.</p>
+  </div>
+</section>
+
+<section id="avaliacoes" data-screen-label="Avaliações" style="background:#F3F7FB; padding:clamp(52px,7vw,88px) 20px; scroll-margin-top:96px">
+  <div style="max-width:1120px; margin:0 auto; display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:28px 48px">
+    <div style="display:flex; align-items:center; gap:clamp(18px,3vw,28px); flex-wrap:wrap">
+      <span style="font-family:'Plus Jakarta Sans',sans-serif; font-weight:800; font-size:clamp(64px,8vw,96px); line-height:.9; letter-spacing:-.04em; color:#071B3A">5,0</span>
+      <span style="display:flex; flex-direction:column; gap:6px">
+        <span style="color:#F5B400; font-size:26px; line-height:1; letter-spacing:3px">★★★★★</span>
+        <span style="font:700 18px/1.2 'Plus Jakarta Sans',sans-serif; color:#071B3A">142 avaliações no Google</span>
+        <span style="font:500 15px/1.4 'Plus Jakarta Sans',sans-serif; color:#5B6B80">Nota máxima de quem já ficou trancado pra fora.</span>
+      </span>
+    </div>
+    <a href="https://www.google.com/maps/search/?api=1&query=Everton+Chaveiro+Expresso+24hrs+Rua+Bar%C3%A3o+da+Torre+521+Ipanema" target="_blank" rel="noopener" style="display:inline-flex; align-items:center; gap:8px; min-height:48px; padding:0 22px; border-radius:999px; border:1.5px solid #071B3A; color:#071B3A; font:600 15px/1 'Plus Jakarta Sans',sans-serif; text-decoration:none; transition:background .2s" style-hover="background:#E8F2FD; color:#071B3A">Ver no Google {{ ic.arrow }}</a>
+  </div>
+</section>
+
+
+<section id="cobertura" data-screen-label="Cobertura" style="background:#0C5DB5; color:#fff; padding:clamp(60px,9vw,110px) 20px; scroll-margin-top:96px">
+  <div style="max-width:1120px; margin:0 auto">
+    <div style="max-width:640px">
+      <div style="font:700 13px/1 'Plus Jakarta Sans',sans-serif; letter-spacing:.14em; text-transform:uppercase; color:#FFD200">Área de atendimento</div>
+      <h2 style="margin:14px 0 0; font-family:'Plus Jakarta Sans',sans-serif; font-weight:800; font-size:clamp(30px,4.4vw,48px); line-height:1.05; letter-spacing:-.025em; color:#fff; text-wrap:balance">Atendemos toda a Zona Sul</h2>
+      <p style="margin:16px 0 0; font:400 18px/1.55 'Plus Jakarta Sans',sans-serif; color:rgba(255,255,255,.88); text-wrap:pretty">Atendimento a domicílio, saindo de Ipanema. Está em outro bairro? <a href="{{ waUrl }}" target="_blank" rel="noopener" style="color:#FFD200; font-weight:800" style-hover="color:#fff">Manda mensagem</a> que a gente combina.</p>
+    </div>
+    <div style="margin-top:36px; display:flex; flex-wrap:wrap; gap:10px">
+      <span style="padding:11px 18px; border-radius:999px; background:#FFD200; color:#071B3A; font:700 15px/1 'Plus Jakarta Sans',sans-serif">Ipanema · base</span>
+      <span style="padding:11px 18px; border-radius:999px; background:rgba(255,255,255,.12); border:1px solid rgba(255,255,255,.24); color:#fff; font:600 15px/1 'Plus Jakarta Sans',sans-serif">Leblon</span>
+      <span style="padding:11px 18px; border-radius:999px; background:rgba(255,255,255,.12); border:1px solid rgba(255,255,255,.24); color:#fff; font:600 15px/1 'Plus Jakarta Sans',sans-serif">Copacabana</span>
+      <span style="padding:11px 18px; border-radius:999px; background:rgba(255,255,255,.12); border:1px solid rgba(255,255,255,.24); color:#fff; font:600 15px/1 'Plus Jakarta Sans',sans-serif">Leme</span>
+      <span style="padding:11px 18px; border-radius:999px; background:rgba(255,255,255,.12); border:1px solid rgba(255,255,255,.24); color:#fff; font:600 15px/1 'Plus Jakarta Sans',sans-serif">Lagoa</span>
+      <span style="padding:11px 18px; border-radius:999px; background:rgba(255,255,255,.12); border:1px solid rgba(255,255,255,.24); color:#fff; font:600 15px/1 'Plus Jakarta Sans',sans-serif">Jardim Botânico</span>
+      <span style="padding:11px 18px; border-radius:999px; background:rgba(255,255,255,.12); border:1px solid rgba(255,255,255,.24); color:#fff; font:600 15px/1 'Plus Jakarta Sans',sans-serif">Gávea</span>
+      <span style="padding:11px 18px; border-radius:999px; background:rgba(255,255,255,.12); border:1px solid rgba(255,255,255,.24); color:#fff; font:600 15px/1 'Plus Jakarta Sans',sans-serif">Humaitá</span>
+      <span style="padding:11px 18px; border-radius:999px; background:rgba(255,255,255,.12); border:1px solid rgba(255,255,255,.24); color:#fff; font:600 15px/1 'Plus Jakarta Sans',sans-serif">Botafogo</span>
+      <span style="padding:11px 18px; border-radius:999px; background:rgba(255,255,255,.12); border:1px solid rgba(255,255,255,.24); color:#fff; font:600 15px/1 'Plus Jakarta Sans',sans-serif">Urca</span>
+      <span style="padding:11px 18px; border-radius:999px; background:rgba(255,255,255,.12); border:1px solid rgba(255,255,255,.24); color:#fff; font:600 15px/1 'Plus Jakarta Sans',sans-serif">Flamengo</span>
+      <span style="padding:11px 18px; border-radius:999px; background:rgba(255,255,255,.12); border:1px solid rgba(255,255,255,.24); color:#fff; font:600 15px/1 'Plus Jakarta Sans',sans-serif">Laranjeiras</span>
+      <span style="padding:11px 18px; border-radius:999px; background:rgba(255,255,255,.12); border:1px solid rgba(255,255,255,.24); color:#fff; font:600 15px/1 'Plus Jakarta Sans',sans-serif">Catete</span>
+      <span style="padding:11px 18px; border-radius:999px; background:rgba(255,255,255,.12); border:1px solid rgba(255,255,255,.24); color:#fff; font:600 15px/1 'Plus Jakarta Sans',sans-serif">Glória</span>
+      <span style="padding:11px 18px; border-radius:999px; background:rgba(255,255,255,.12); border:1px solid rgba(255,255,255,.24); color:#fff; font:600 15px/1 'Plus Jakarta Sans',sans-serif">Cosme Velho</span>
+      <span style="padding:11px 18px; border-radius:999px; background:rgba(255,255,255,.12); border:1px solid rgba(255,255,255,.24); color:#fff; font:600 15px/1 'Plus Jakarta Sans',sans-serif">São Conrado</span>
+      <span style="padding:11px 18px; border-radius:999px; background:rgba(255,255,255,.12); border:1px solid rgba(255,255,255,.24); color:#fff; font:600 15px/1 'Plus Jakarta Sans',sans-serif">Vidigal</span>
+    </div>
+  </div>
+</section>
+
+<section id="onde" data-screen-label="Onde estamos" style="background:#fff; padding:clamp(60px,9vw,110px) 0 0; scroll-margin-top:96px">
+  <div style="max-width:1120px; margin:0 auto; padding:0 20px; display:flex; flex-wrap:wrap; align-items:flex-end; justify-content:space-between; gap:16px 40px">
+    <div style="max-width:560px">
+      <div style="font:600 13px/1 'Plus Jakarta Sans',sans-serif; letter-spacing:.14em; text-transform:uppercase; color:#E31E24">Onde estamos</div>
+      <h2 style="margin:14px 0 0; font-family:'Plus Jakarta Sans',sans-serif; font-weight:800; font-size:clamp(30px,4.4vw,48px); line-height:1.05; letter-spacing:-.025em; color:#071B3A; text-wrap:balance">Quiosque na Barão da Torre, Ipanema</h2>
+    </div>
+    <p style="margin:0; max-width:380px; font:400 17px/1.55 'Plus Jakarta Sans',sans-serif; color:#4A5A70; text-wrap:pretty">Passa lá pra cópias e chaves na hora, ou chama que a gente vai até você.</p>
+  </div>
+  <div style="position:relative; margin-top:36px">
+    <div style="position:{{ cardPos }}; z-index:2; top:{{ cardTop }}; left:{{ cardLeft }}; transform:{{ cardTf }}; width:{{ cardW }}; margin:{{ cardMg }}; background:#fff; border-radius:24px; padding:clamp(20px,3vw,26px); box-shadow:0 30px 80px -20px rgba(7,27,58,.35), 0 0 0 1px rgba(7,27,58,.06); display:flex; flex-direction:column; gap:18px">
+      <div style="display:flex; align-items:center; gap:14px">
+        <span style="width:46px; height:46px; flex:none; border-radius:14px; background:#071B3A; color:#FFD200; display:flex; align-items:center; justify-content:center">{{ ic.pin }}</span>
+        <span style="display:flex; flex-direction:column; gap:4px">
+          <span style="font:700 18px/1.2 'Plus Jakarta Sans',sans-serif; color:#071B3A; letter-spacing:-.01em">Rua Barão da Torre, 521</span>
+          <span style="font:500 14px/1.4 'Plus Jakarta Sans',sans-serif; color:#5B6B80">Edifício Briggs · Ipanema · Rio de Janeiro</span>
+        </span>
+      </div>
+      <div style="display:grid; grid-template-columns:repeat(2, minmax(0,1fr)); gap:14px; padding:16px 0; border-top:1px solid #EEF2F7; border-bottom:1px solid #EEF2F7">
+        <div style="display:flex; flex-direction:column; gap:5px"><span style="font:600 11px/1 'Plus Jakarta Sans',sans-serif; letter-spacing:.12em; text-transform:uppercase; color:#8A99AD">Horário</span><span style="display:inline-flex; align-items:center; gap:7px; font:600 14px/1.3 'Plus Jakarta Sans',sans-serif; color:#0F7A3E"><span style="width:7px; height:7px; border-radius:50%; background:#25D366; flex:none"></span>Aberto 24h, todo dia</span></div>
+        <div style="display:flex; flex-direction:column; gap:5px"><span style="font:600 11px/1 'Plus Jakarta Sans',sans-serif; letter-spacing:.12em; text-transform:uppercase; color:#8A99AD">Atendimento</span><span style="font:600 14px/1.3 'Plus Jakarta Sans',sans-serif; color:#071B3A">No quiosque ou a domicílio</span></div>
+      </div>
+      <div style="display:flex; flex-direction:column; gap:10px">
+        <a href="https://www.google.com/maps/dir/?api=1&destination=Rua+Bar%C3%A3o+da+Torre+521+Ipanema+Rio+de+Janeiro" target="_blank" rel="noopener" style="display:flex; align-items:center; justify-content:center; gap:10px; min-height:52px; padding:0 20px; border-radius:14px; background:#071B3A; color:#fff; font:700 15px/1 'Plus Jakarta Sans',sans-serif; text-decoration:none; transition:transform .2s, background .2s" style-hover="transform:translateY(-1px); background:#0C2A5C; color:#fff">{{ ic.navSm }} Como chegar</a>
+        <div style="display:grid; grid-template-columns:repeat(2, minmax(0,1fr)); gap:10px">
+          <a href="https://waze.com/ul?q=Rua%20Bar%C3%A3o%20da%20Torre%20521%20Ipanema%20Rio%20de%20Janeiro&navigate=yes" target="_blank" rel="noopener" style="display:flex; align-items:center; justify-content:center; gap:8px; min-height:46px; padding:0 14px; border-radius:14px; border:1.5px solid #DCE4EE; color:#071B3A; font:600 14px/1 'Plus Jakarta Sans',sans-serif; text-decoration:none; transition:background .2s" style-hover="background:#F3F7FB; color:#071B3A">{{ ic.route }} Waze</a>
+          <button type="button" onClick="{{ copyAddress }}" style="display:flex; align-items:center; justify-content:center; gap:8px; min-height:46px; padding:0 14px; border-radius:14px; border:1.5px solid #DCE4EE; background:#fff; color:#071B3A; font:600 14px/1 'Plus Jakarta Sans',sans-serif; cursor:pointer; transition:background .2s" style-hover="background:#F3F7FB">{{ copyIcon }} {{ copyLabel }}</button>
+        </div>
+      </div>
+    </div>
+    <div style="position:relative; height:{{ mapH }}; background:#E8F2FD">
+      <iframe src="https://www.google.com/maps?q=Everton+Chaveiro+Expresso+24hrs%2C+Rua+Bar%C3%A3o+da+Torre%2C+521+-+Ipanema%2C+Rio+de+Janeiro+-+RJ%2C+22411-003&z=17&output=embed" title="Mapa: Everton Chaveiro Expresso, Rua Barão da Torre, 521, Ipanema" loading="lazy" referrerpolicy="no-referrer-when-downgrade" style="position:absolute; inset:0; width:100%; height:100%; border:0; display:block"></iframe>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer id="contato" data-screen-label="Rodapé" style="background:#071B3A; color:#fff; padding:clamp(48px,7vw,80px) 20px 28px; scroll-margin-top:96px">
+  <div style="max-width:1120px; margin:0 auto; display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:24px 40px">
+    <div style="display:flex; flex-direction:column; gap:10px; max-width:520px">
+      <h2 style="margin:0; font-family:'Plus Jakarta Sans',sans-serif; font-weight:800; font-size:clamp(26px,3.4vw,40px); line-height:1.05; letter-spacing:-.025em; color:#fff; text-wrap:balance">Precisa de um chaveiro agora?</h2>
+      <p style="margin:0; font:400 16px/1.5 'Plus Jakarta Sans',sans-serif; color:rgba(255,255,255,.72); text-wrap:pretty">24 horas, todos os dias. Manda mensagem e diz onde você está.</p>
+    </div>
+    <a href="{{ waUrl }}" target="_blank" rel="noopener" style="display:inline-flex; width:min(100%, 320px); align-items:center; justify-content:center; gap:12px; min-height:60px; padding:8px 28px 8px 8px; border-radius:999px; background:linear-gradient(180deg,#3BE37C,#22C55E); border:1px solid rgba(6,51,27,.16); color:#06331B; font:700 17px/1 'Plus Jakarta Sans',sans-serif; letter-spacing:-.005em; text-decoration:none; box-shadow:inset 0 1px 0 rgba(255,255,255,.45), 0 10px 24px -8px rgba(34,197,94,.65); transition:transform .2s, box-shadow .2s" style-hover="transform:translateY(-2px); box-shadow:inset 0 1px 0 rgba(255,255,255,.45), 0 16px 32px -10px rgba(34,197,94,.85); color:#06331B"><span style="display:flex; align-items:center; justify-content:center; width:40px; height:40px; border-radius:50%; background:#fff; color:#1FAD52; flex:none; box-shadow:0 2px 6px rgba(6,51,27,.18)">{{ waIc }}</span>Chamar no WhatsApp</a>
+  </div>
+  <div style="max-width:1120px; margin:clamp(36px,5vw,56px) auto 0; padding-top:22px; border-top:1px solid rgba(255,255,255,.1); display:flex; flex-wrap:wrap; align-items:center; gap:14px 28px; font:500 13.5px/1.4 'Plus Jakarta Sans',sans-serif; color:rgba(255,255,255,.62)">
+    <a href="#top" style="display:inline-flex; align-items:center; gap:10px; color:#fff; font:600 14px/1 'Plus Jakarta Sans',sans-serif; text-decoration:none"><img src="assets/logo.png" alt="" style="width:30px; height:30px; display:block; border-radius:50%">Everton Chaveiro Expresso</a>
+    <span>R. Barão da Torre, 521 · Ipanema</span>
+    <a href="tel:+5521988724879" style="display:inline-flex; align-items:center; gap:7px; color:rgba(255,255,255,.62); text-decoration:none" style-hover="color:#fff">{{ ic.phoneSm }} (21) 98872-4879</a>
+    <a href="https://www.instagram.com/evertonchaveiro24h/" target="_blank" rel="noopener" style="display:inline-flex; align-items:center; gap:7px; color:rgba(255,255,255,.62); text-decoration:none" style-hover="color:#fff">{{ ic.instaSm }} @evertonchaveiro24h</a>
+    <span style="margin-left:auto">© 2026</span>
+  </div>
+</footer>
+<div style="height:{{ bottomSpacer }}"></div>
+
+<nav data-screen-label="Dock mobile" aria-label="Navegação" style="position:fixed; left:12px; right:12px; bottom:calc(10px + env(safe-area-inset-bottom)); z-index:70; display:{{ showDock }}; align-items:center; gap:4px; padding:6px; border-radius:26px; background:rgba(7,27,58,.88); backdrop-filter:blur(20px) saturate(1.4); -webkit-backdrop-filter:blur(20px) saturate(1.4); border:1px solid rgba(255,255,255,.12); box-shadow:0 18px 50px rgba(0,0,0,.45), inset 0 1px 0 rgba(255,255,255,.08); animation-name:riseIn; animation-duration:.6s; animation-delay:calc(var(--i, 2.2s) + .9s); animation-fill-mode:both">
+  <a href="#servicos" style="flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:5px; min-height:54px; border-radius:20px; background:{{ dockBgServicos }}; color:{{ dockColServicos }}; text-decoration:none; font:600 11px/1 'Plus Jakarta Sans',sans-serif; letter-spacing:.01em; transition:background .3s ease, color .3s ease">{{ ic.dockKey }}<span>Serviços</span></a>
+  <a href="#avaliacoes" style="flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:5px; min-height:54px; border-radius:20px; background:{{ dockBgAvaliacoes }}; color:{{ dockColAvaliacoes }}; text-decoration:none; font:600 11px/1 'Plus Jakarta Sans',sans-serif; letter-spacing:.01em; transition:background .3s ease, color .3s ease">{{ ic.dockStar }}<span>Avaliações</span></a>
+  <a href="#onde" style="flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:5px; min-height:54px; border-radius:20px; background:{{ dockBgOnde }}; color:{{ dockColOnde }}; text-decoration:none; font:600 11px/1 'Plus Jakarta Sans',sans-serif; letter-spacing:.01em; transition:background .3s ease, color .3s ease">{{ ic.dockPin }}<span>Onde</span></a>
+  <a href="{{ waUrl }}" target="_blank" rel="noopener" aria-label="Chamar no WhatsApp" style="flex:none; width:54px; height:54px; margin-left:4px; border-radius:20px; background:linear-gradient(180deg,#3BE37C,#22C55E); border:1px solid rgba(6,51,27,.16); color:#06331B; display:flex; align-items:center; justify-content:center; text-decoration:none; box-shadow:inset 0 1px 0 rgba(255,255,255,.45), 0 8px 20px -6px rgba(34,197,94,.7)" style-hover="color:#06331B">{{ waIcLg }}</a>
+</nav>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;introAnimation&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Comportamento&quot;},&quot;whatsappMessage&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;Olá, Everton! Preciso de um chaveiro.&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;WhatsApp&quot;}}">
+class Component extends DCLogic {
+  state = { introDone: false, bp: Component.bp(), icons: false, scrolled: false, hidden: false, activeId: null, progress: 0, hoverId: null, ind: { x: 0, w: 0, o: 0 } };
+  navRef = React.createRef(); linkRefs = { servicos: React.createRef(), avaliacoes: React.createRef(), onde: React.createRef() };
+  static queries = ['(max-width: 639px)', '(min-width: 840px)', '(min-width: 1024px)', '(prefers-reduced-motion: reduce)'];
+  static bp() {
+    if (typeof window === 'undefined' || !window.matchMedia) return { mobile: false, navInline: true, desktop: true, reduce: false };
+    const [mobile, navInline, desktop, reduce] = Component.queries.map(q => window.matchMedia(q).matches);
+    return { mobile, navInline, desktop, reduce };
+  }
+  heroRef = React.createRef();
+  introWrapRef = React.createRef(); introBgRef = React.createRef(); introGlowRef = React.createRef(); introTagRef = React.createRef(); heroLogoRef = React.createRef();
+  timers = [];
+  waPath = 'M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z';
+
+  componentDidMount() {
+    this.mqls = Component.queries.map(q => window.matchMedia(q));
+    this.onMq = () => { const now = Component.bp(); if (JSON.stringify(now) !== JSON.stringify(this.lastBp)) { this.lastBp = now; this.forceUpdate(); } this.measure(); };
+    this.mqls.forEach(m => m.addEventListener ? m.addEventListener('change', this.onMq) : m.addListener(this.onMq));
+    window.addEventListener('resize', this.onMq);
+    this.timers.push(setTimeout(this.onMq, 0), setTimeout(this.onMq, 400), setTimeout(this.onMq, 1200));
+    const reduce = this.state.bp.reduce;
+    if ((this.props.introAnimation ?? true) && !reduce) this.startIntro(); else this.skipIntro();
+    this.waitIcons();
+    this.onScroll = () => { if (this.raf) return; this.raf = requestAnimationFrame(() => { this.raf = 0; this.updateScroll(); }); };
+    window.addEventListener('scroll', this.onScroll, { passive: true });
+    this.timers.push(setTimeout(() => { this.updateScroll(); this.measure(); }, 50), setTimeout(() => this.measure(), 600), setTimeout(() => this.measure(), 1500));
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => this.measure());
+  }
+  componentDidUpdate(prev) {
+    const on = this.props.introAnimation ?? true;
+    if (on !== (prev.introAnimation ?? true)) { if (on) this.startIntro(); else this.skipIntro(); }
+    this.measure();
+  }
+  componentWillUnmount() { if (this.mqls) this.mqls.forEach(m => m.removeEventListener ? m.removeEventListener('change', this.onMq) : m.removeListener(this.onMq)); window.removeEventListener('resize', this.onMq); this.clearTimers(); clearTimeout(this.ti); window.removeEventListener('scroll', this.onScroll); if (this.raf) cancelAnimationFrame(this.raf); }
+
+  clearTimers() { this.timers.forEach(clearTimeout); this.timers = []; }
+  setVar(on) { document.documentElement.style.setProperty('--i', on ? '2.2s' : '-1s'); }
+  startIntro() {
+    this.clearTimers(); this.setVar(true);
+    const go = () => { this.timers.push(
+      setTimeout(() => this.flyLogo(), 1900),
+      setTimeout(() => this.crossfade(), 2700),
+      setTimeout(() => this.setState({ introDone: true }), 3100)); };
+    if (this.state.introDone) this.setState({ introDone: false }, go); else go();
+  }
+  flyLogo() {
+    this.onMq();
+    const w = this.introWrapRef.current, h = this.heroLogoRef.current; if (!w || !h) return;
+    const a = w.getBoundingClientRect(), b = h.getBoundingClientRect();
+    const s = b.width / a.width, dx = (b.left + b.width / 2) - (a.left + a.width / 2), dy = (b.top + b.height / 2) - (a.top + a.height / 2);
+    h.style.visibility = 'hidden';
+    w.style.animation = 'none'; w.style.transition = 'transform .8s cubic-bezier(.7,0,.25,1)'; void w.offsetWidth;
+    w.style.transform = 'translate(' + dx + 'px,' + dy + 'px) scale(' + s + ')';
+    [this.introBgRef, this.introGlowRef, this.introTagRef].forEach(r => { if (r.current) r.current.style.opacity = '0'; });
+  }
+  crossfade() {
+    const w = this.introWrapRef.current, h = this.heroLogoRef.current;
+    if (h) h.style.visibility = '';
+    if (w) { w.style.transition += ', opacity .35s ease'; w.style.opacity = '0'; }
+  }
+  updateScroll() {
+    const y = window.scrollY || 0, doc = document.documentElement, max = doc.scrollHeight - window.innerHeight;
+    const progress = max > 0 ? Math.round(Math.min(1, y / max) * 100) : 0;
+    const last = this.lastY || 0, down = y > last + 2, up = y < last - 2;
+    if (down || up) this.lastY = y;
+    const mob = Component.bp().mobile;
+    let hidden = mob ? this.state.hidden : false; if (mob && down && y > 160) hidden = true; else if (!mob || up || y < 80) hidden = false;
+    const probe = y + window.innerHeight * .4; let activeId = null;
+    for (const id of ['servicos', 'avaliacoes', 'onde']) { const el = document.getElementById(id); if (el && el.getBoundingClientRect().top + y <= probe) activeId = id; }
+    if (y + window.innerHeight >= doc.scrollHeight - 4) activeId = 'onde';
+    const scrolled = y > 24, s = this.state;
+    if (scrolled !== s.scrolled || hidden !== s.hidden || activeId !== s.activeId || progress !== s.progress) this.setState({ scrolled, hidden, activeId, progress });
+  }
+  measure() {
+    const nav = this.navRef && this.navRef.current, id = this.state.hoverId || this.state.activeId, ind = this.state.ind;
+    const el = id && this.linkRefs[id] && this.linkRefs[id].current;
+    if (!nav || !el || nav.offsetParent === null) { if (ind.o !== 0) this.setState({ ind: { x: ind.x, w: ind.w, o: 0 } }); return; }
+    const a = nav.getBoundingClientRect(), b = el.getBoundingClientRect(), x = b.left - a.left - nav.clientLeft, w = b.width;
+    if (Math.abs(x - ind.x) > .5 || Math.abs(w - ind.w) > .5 || ind.o !== 1) this.setState({ ind: { x, w, o: 1 } });
+  }
+  setHover(id) { if (this.state.hoverId !== id) this.setState({ hoverId: id }); }
+  hoverServicos = () => this.setHover('servicos');
+  hoverAvaliacoes = () => this.setHover('avaliacoes');
+  hoverOnde = () => this.setHover('onde');
+  navLeave = () => { if (this.state.hoverId) this.setState({ hoverId: null }); };
+  copyAddress = () => {
+    const txt = 'Rua Barão da Torre, 521 - Edifício Briggs, Ipanema, Rio de Janeiro - RJ, 22411-003';
+    const done = () => { this.setState({ copied: true }); clearTimeout(this.ct); this.ct = setTimeout(() => this.setState({ copied: false }), 2200); };
+    if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(txt).then(done, done); else done();
+  };
+  skipIntro = () => {
+    this.clearTimers(); this.setVar(false); if (this.onMq) this.onMq();
+    const h = this.heroLogoRef.current; if (h) h.style.visibility = '';
+    if (!this.state.introDone) this.setState({ introDone: true });
+  };
+
+  waitIcons() {
+    const L = window.lucide;
+    if (L && (L.icons || L.Key)) { this.setState({ icons: true }); return; }
+    if ((this.tries = (this.tries || 0) + 1) < 150) this.ti = setTimeout(() => this.waitIcons(), 100);
+  }
+  icon(names, size = 22, sw = 2) {
+    const L = window.lucide; if (!L) return null;
+    const src = L.icons || L; let node = null;
+    for (const n of names) { const k = n.split('-').map(s => s[0].toUpperCase() + s.slice(1)).join(''); if (Array.isArray(src[k])) { node = src[k]; break; } }
+    if (!node) return null;
+    const kids = node[0] === 'svg' ? node[2] : node;
+    return React.createElement('svg', { xmlns: 'http://www.w3.org/2000/svg', width: size, height: size, viewBox: '0 0 24 24', fill: 'none', stroke: 'currentColor', strokeWidth: sw, strokeLinecap: 'round', strokeLinejoin: 'round', style: { display: 'block', flex: 'none' } },
+      kids.map(([t, a], i) => React.createElement(t, { ...a, key: i })));
+  }
+  insta(size) {
+    return React.createElement('svg', { xmlns: 'http://www.w3.org/2000/svg', width: size, height: size, viewBox: '0 0 24 24', fill: 'none', stroke: 'currentColor', strokeWidth: 2, strokeLinecap: 'round', strokeLinejoin: 'round', style: { display: 'block', flex: 'none' } },
+      React.createElement('rect', { x: 2, y: 2, width: 20, height: 20, rx: 5 }),
+      React.createElement('circle', { cx: 12, cy: 12, r: 4 }),
+      React.createElement('circle', { cx: 17.5, cy: 6.5, r: 0.6, fill: 'currentColor' }));
+  }
+  wa(size) {
+    return React.createElement('svg', { xmlns: 'http://www.w3.org/2000/svg', width: size, height: size, viewBox: '0 0 24 24', fill: 'currentColor', style: { display: 'block', flex: 'none' } }, React.createElement('path', { d: this.waPath }));
+  }
+
+  renderVals() {
+    const msg = this.props.whatsappMessage ?? 'Olá, Everton! Preciso de um chaveiro.';
+    const wa = t => 'https://wa.me/5521988724879?text=' + encodeURIComponent(t);
+    const bp = Component.bp(); this.lastBp = bp;
+    const { mobile: m, navInline, reduce } = bp;
+    const s = this.state, act = s.scrolled, on = id => s.activeId === id;
+    const I = (n, s, w) => this.icon(n, s, w);
+    return {
+      showIntro: !this.state.introDone, skipIntro: this.skipIntro,
+      introWrapRef: this.introWrapRef, introBgRef: this.introBgRef, introGlowRef: this.introGlowRef, introTagRef: this.introTagRef, heroLogoRef: this.heroLogoRef,
+      waUrl: wa(msg),
+      svc: {
+        door: wa('Olá, Everton! Preciso de abertura de porta residencial.'),
+        car: wa('Olá, Everton! Preciso de abertura de carro.'),
+        vault: wa('Olá, Everton! Preciso de abertura de cofre.'),
+        key: wa('Olá, Everton! Preciso de uma chave codificada / automotiva.'),
+        copy: wa('Olá, Everton! Preciso fazer cópia de chave.'),
+        lock: wa('Olá, Everton! Preciso trocar ou instalar uma fechadura.'),
+        finger: wa('Olá, Everton! Quero instalar uma fechadura digital.'),
+        bike: wa('Olá, Everton! Preciso de chave de moto.'),
+        wrench: wa('Olá, Everton! Preciso consertar uma fechadura.'),
+        home: wa('Olá, Everton! Preciso de atendimento a domicílio.'),
+        urgent: wa('Olá, Everton! Preciso de um chaveiro agora, é urgente.')
+      },
+      showNav: m ? 'none' : 'flex',
+      showWordmark: (m || navInline) ? 'flex' : 'none',
+      showPillText: m ? 'none' : 'inline-flex',
+      navHide: s.hidden ? 'translateY(-120%)' : 'translateY(0)',
+      navOuterPad: act ? '10px 12px' : '14px clamp(14px,3vw,24px)',
+      navMax: act ? (m ? '100%' : '960px') : '1160px',
+      navPad: act ? '7px 8px 7px 10px' : '8px 10px 8px 12px',
+      navBg: act ? 'rgba(7,27,58,.78)' : 'rgba(7,27,58,0)',
+      navBorder: act ? 'rgba(255,255,255,.12)' : 'rgba(255,255,255,0)',
+      navShadow: act ? '0 20px 50px -10px rgba(0,0,0,.45), inset 0 1px 0 rgba(255,255,255,.08)' : 'none',
+      navBlur: act ? 'blur(18px) saturate(1.4)' : 'none',
+      progressDeg: (s.progress * 3.6) + 'deg',
+      ringOpacity: act ? '1' : '0',
+      indX: s.ind.x, indW: s.ind.w, indO: s.ind.o,
+      navRef: this.navRef, linkRefs: this.linkRefs, navLeave: this.navLeave,
+      hoverServicos: this.hoverServicos, hoverAvaliacoes: this.hoverAvaliacoes, hoverOnde: this.hoverOnde,
+      colServicos: on('servicos') ? '#fff' : 'rgba(255,255,255,.72)',
+      colAvaliacoes: on('avaliacoes') ? '#fff' : 'rgba(255,255,255,.72)',
+      colOnde: on('onde') ? '#fff' : 'rgba(255,255,255,.72)',
+      svcCols: m ? 'minmax(0,1fr) 44px' : '52px minmax(0,1fr) 48px',
+      slideAnim: reduce ? 'none' : 'slideFade',
+      svcGroupCols: navInline ? 'repeat(3, minmax(0,1fr))' : 'minmax(0,1fr)',
+      heroOverlay: navInline
+        ? 'linear-gradient(90deg, rgba(5,12,26,.42) 0%, rgba(5,12,26,.58) 48%, rgba(5,12,26,.8) 100%)'
+        : 'linear-gradient(180deg, rgba(5,12,26,.4) 0%, rgba(5,12,26,.82) 50%, rgba(5,12,26,.92) 100%)',
+      svcNum: m ? 'none' : 'block',
+      heroRef: this.heroRef,
+      mapH: m ? '380px' : 'clamp(480px, 60vh, 600px)',
+      cardPos: m ? 'relative' : 'absolute',
+      cardTop: m ? 'auto' : '50%',
+      cardLeft: m ? 'auto' : 'max(20px, calc((100% - 1120px) / 2 + 20px))',
+      cardTf: m ? 'none' : 'translateY(-50%)',
+      cardW: m ? 'auto' : 'min(400px, calc(100% - 40px))',
+      cardMg: m ? '0 20px 16px' : '0',
+      copyAddress: this.copyAddress,
+      copyLabel: s.copied ? 'Copiado!' : 'Copiar endereço',
+      copyIcon: s.copied ? I(['check'], 16) : I(['copy'], 16),
+      showDock: m ? 'flex' : 'none',
+      bottomSpacer: m ? '92px' : '0px',
+      dockBgServicos: on('servicos') ? 'rgba(255,210,0,.14)' : 'transparent', dockColServicos: on('servicos') ? '#FFD200' : 'rgba(255,255,255,.72)',
+      dockBgAvaliacoes: on('avaliacoes') ? 'rgba(255,210,0,.14)' : 'transparent', dockColAvaliacoes: on('avaliacoes') ? '#FFD200' : 'rgba(255,255,255,.72)',
+      dockBgOnde: on('onde') ? 'rgba(255,210,0,.14)' : 'transparent', dockColOnde: on('onde') ? '#FFD200' : 'rgba(255,255,255,.72)',
+      waIc: this.wa(22), waIcSm: this.wa(18), waIcLg: this.wa(26),
+      ic: {
+        door: I(['door-open']), car: I(['car-front', 'car']), vault: I(['vault', 'lock-keyhole', 'lock']), key: I(['key-round', 'key']),
+        copy: I(['copy']), lock: I(['lock-keyhole', 'lock']), finger: I(['fingerprint']), bike: I(['bike']), wrench: I(['wrench']),
+        nav: I(['navigation']), navSm: I(['navigation'], 15), clock: I(['clock']),
+        dockKey: I(['key-round', 'key'], 20), dockStar: I(['star'], 20), dockPin: I(['map-pin'], 20),
+        pin: I(['map-pin'], 22), route: I(['route', 'map'], 16), instaSm: this.insta(15), store: I(['store']), pinSm: I(['map-pin'], 16),
+        phone: I(['phone'], 18), phoneSm: I(['phone'], 16), insta: this.insta(18), arrow: I(['arrow-right'], 18)
+      }
+    };
+  }
+}
+</script>
+</body>
+</html>
